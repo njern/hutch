@@ -18,7 +18,7 @@ const (
 
 var (
 	topics            = flag.String("topics", "", "The topics Hutch should be tracking.")
-	numberOfLinks     = flag.Int("num_links", 5, "The number of unique links per topic to track (daily)")
+	numberOfLinks     = flag.Int("num_links", 5, "The number of unique links to track (daily)")
 	trackedLinks      = make(map[string]int)
 	lastLinksSentTime = time.Now()
 	gmail             *gogmail.GMail
