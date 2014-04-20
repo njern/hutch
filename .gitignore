@@ -21,3 +21,6 @@ _testmain.go
 
 *.exe
 *.test
+
+# Don't accidentally commit credentials.
+CREDENTIALS
