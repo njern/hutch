@@ -6,7 +6,6 @@ import (
 	"github.com/darkhelmet/twitterstream"
 	"github.com/njern/gogmail"
 	"log"
-	"runtime"
 	"sort"
 	"time"
 )
@@ -53,7 +52,6 @@ func handleIncomingTweet(tweet *twitterstream.Tweet) {
 		}
 	}
 
-	log.Printf("Time since lastLinksSent: %s", time.Since(lastLinksSentTime))
 	// Send the most popular links and clear the list every twenty-four hours.
 	if time.Since(lastLinksSentTime).Seconds() > LINK_SEND_INTERVAL.Seconds() {
 		// Refresh the lastLinksSentTime
