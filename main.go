@@ -74,13 +74,10 @@ func handleIncomingTweet(tweet *twitterstream.Tweet) {
 		list += "\nKind regards,\n\nHutch"
 		subject := fmt.Sprintf("Your daily tracked links from Twitter")
 
-		log.Println(list)
 		err := gmail.SendMail([]string{gmail.Username}, subject, list, false)
 		if err != nil {
 			log.Fatalf("Something went horribly wrong sending your daily e-mail! Error was: %s\n", err)
 		}
-
-		log.Fatalf("Sent mail to %s!\n", gmail.Username)
 
 		// Empty the list and begin the dance all over again.
 		trackedLinks = make(map[string]int)
