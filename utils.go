@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -22,27 +23,17 @@ func max(a, b int) int {
 }
 
 // loadCredentials() loads the user's credentials
-// from ./CREDENTIALS - the file should be created
-// as in CREDENTIALS_EXAMPLE
-func loadCredentials() (consumerKey, consumerSecret, accessToken, accessSecret, gmailUser, gmailPassword string) {
-	credentials, err := ioutil.ReadFile("CREDENTIALS")
+// from ./credentials.json - the file should be created
+// following format in credentials_example
+func loadCredentials() {
+	file, err := ioutil.ReadFile("credentials.json")
 	if err != nil {
-		log.Fatalln("Could not load CREDENTIALS file (See CREDENTIALS_EXAMPLE for an example):", err)
+		log.Fatalln("Could not load credentials.json file (See credentials_example.json):", err)
 	}
 
-	lines := strings.Split(string(credentials), "\n")
-	if len(lines) < 6 {
-		log.Fatalln("Your CREDENTIALS file should have at least six line (look at CREDENTIALS_EXAMPLE)")
+	if err := json.Unmarshal(file, &config); err != nil {
+		log.Fatalln("Error parsing credentials.json, please confirm valid json format", err)
 	}
-
-	consumerKey = lines[0]
-	consumerSecret = lines[1]
-	accessToken = lines[2]
-	accessSecret = lines[3]
-	gmailUser = lines[4]
-	gmailPassword = lines[5]
-
-	return
 }
 
 // resolveFinalURL resolves a given URL. Since all Twitter

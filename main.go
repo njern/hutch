@@ -23,6 +23,16 @@ var (
 	gmail             *gogmail.GMail
 )
 
+var config struct {
+	ConsumerKey    string
+	ConsumerSecret string
+	AccessToken    string
+	AccessSecret   string
+	GmailUser      string
+	GmailPassword  string
+	Sendto         string
+}
+
 func parseFlags() {
 	flag.Parse()
 	if *topics == "" {
@@ -67,14 +77,14 @@ func handleIncomingTweet(tweet *twitterstream.Tweet) {
 		sort.Sort(sort.Reverse(ByScore(linkScores)))
 
 		// Send the top links (in order) via e-mail (TODO: HTML template)
-		list := fmt.Sprintf("Hi there %s, here are your links for the last 24 hours:\n\n\n", gmail.Username)
+		list := fmt.Sprintf("Hi there %s, here are your links for the last 24 hours:\n\n\n", config.GmailUser)
 		for i := 0; i < min(*numberOfLinks, len(linkScores)); i++ {
 			list += fmt.Sprintf("\t* %s - %d mentions\n", linkScores[i].link, linkScores[i].score)
 		}
 		list += "\nKind regards,\n\nHutch"
 		subject := fmt.Sprintf("Your daily tracked links from Twitter")
 
-		err := gmail.SendMail([]string{gmail.Username}, subject, list, false)
+		err := gmail.SendMail([]string{config.Sendto}, subject, list, false)
 		if err != nil {
 			log.Fatalf("Something went horribly wrong sending your daily e-mail! Error was: %s\n", err)
 		}
@@ -90,11 +100,13 @@ func init() {
 
 func main() {
 	// Load credentials
-	consumerKey, consumerSecret, accessToken, accessSecret, mailAddress, gmailPassword := loadCredentials()
+	loadCredentials()
+
 	// Initialize Twitter streaming client.
-	twitterStream := twitterstream.NewClient(consumerKey, consumerSecret, accessToken, accessSecret)
+	twitterStream := twitterstream.NewClient(config.ConsumerKey, config.ConsumerSecret, config.AccessToken, config.AccessSecret)
+
 	// Initialize e-mail "client"
-	gmail = gogmail.GmailConnection(mailAddress, gmailPassword)
+	gmail = gogmail.GmailConnection(config.GmailUser, config.GmailPassword)
 
 	for {
 		stream, err := twitterStream.Track(*topics)
