@@ -22,5 +22,9 @@ _testmain.go
 *.exe
 *.test
 
+# Ignore generated binary
+hutch
+
 # Don't accidentally commit credentials.
 CREDENTIALS
+credentials.json
